@@ -1,0 +1,27 @@
+{
+  "gan": "ding",
+  "themeId": "candle_lantern",
+  "sceneType": "candle",
+  "dominantElement": "fire",
+  "colors": {
+    "skyTop": "#1d0d0a",
+    "skyMid": "#4a2017",
+    "skyBottom": "#080405",
+    "accent": "#E6A86F",
+    "accent2": "#A44A2C",
+    "glow": "rgba(255,180,105,0.38)"
+  },
+  "motion": {
+    "speed": 0.58,
+    "particles": 36,
+    "smoke": 0.46,
+    "flame": 0.34,
+    "lowMotionParticles": 10
+  },
+  "sound": {
+    "base": [{ "src": "/sounds/themes/ding/quiet-room.mp3", "volume": 0.045 }],
+    "element": [{ "src": "/sounds/themes/ding/candle.mp3", "volume": 0.06 }],
+    "harmony": [{ "src": "/sounds/themes/ding/incense.mp3", "volume": 0.035 }],
+    "events": [{ "src": "/sounds/events/ding/candle-jump.mp3", "volume": 0.065, "minDelay": 12, "maxDelay": 35 }]
+  }
+}

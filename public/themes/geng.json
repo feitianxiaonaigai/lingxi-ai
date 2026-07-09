@@ -1,0 +1,28 @@
+{
+  "gan": "geng",
+  "themeId": "metal_mountain",
+  "sceneType": "metalMountain",
+  "dominantElement": "metal",
+  "colors": {
+    "skyTop": "#151a20",
+    "skyMid": "#303743",
+    "skyBottom": "#07090d",
+    "accent": "#C5CCD6",
+    "accent2": "#727B88",
+    "glow": "rgba(210,220,235,0.34)"
+  },
+  "motion": {
+    "speed": 0.62,
+    "particles": 42,
+    "clouds": 5,
+    "snow": 0.32,
+    "glints": 0.35,
+    "lowMotionParticles": 12
+  },
+  "sound": {
+    "base": [{ "src": "/sounds/themes/geng/cold-wind.mp3", "volume": 0.06 }],
+    "element": [{ "src": "/sounds/themes/geng/metal-resonance.mp3", "volume": 0.045 }],
+    "harmony": [{ "src": "/sounds/themes/geng/cold-chime.mp3", "volume": 0.03 }],
+    "events": [{ "src": "/sounds/events/geng/metal-hit.mp3", "volume": 0.06, "minDelay": 14, "maxDelay": 35 }]
+  }
+}

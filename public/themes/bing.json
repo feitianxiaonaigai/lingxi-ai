@@ -1,0 +1,28 @@
+{
+  "gan": "bing",
+  "themeId": "solar_flame",
+  "sceneType": "solar",
+  "dominantElement": "fire",
+  "colors": {
+    "skyTop": "#3b170b",
+    "skyMid": "#8a3418",
+    "skyBottom": "#120605",
+    "accent": "#F2B45E",
+    "accent2": "#D85B2A",
+    "glow": "rgba(255,198,94,0.42)"
+  },
+  "motion": {
+    "speed": 0.82,
+    "particles": 48,
+    "heat": 0.48,
+    "flame": 0.52,
+    "clouds": 4,
+    "lowMotionParticles": 12
+  },
+  "sound": {
+    "base": [{ "src": "/sounds/themes/bing/warm-wind.mp3", "volume": 0.06 }],
+    "element": [{ "src": "/sounds/themes/bing/fire.mp3", "volume": 0.07 }],
+    "harmony": [{ "src": "/sounds/themes/bing/sun-air.mp3", "volume": 0.03 }],
+    "events": [{ "src": "/sounds/events/bing/spark.mp3", "volume": 0.075, "minDelay": 12, "maxDelay": 35 }]
+  }
+}
