@@ -31,7 +31,7 @@ const I18N={
 
     wx_head:'五行强弱分布',fate_label:'命格概述',
     analysis_shishen:'十神分析 · 点击展开',analysis_score:'命局评分',
-    btn_reading:'深入一生解读 →',btn_share:'↗ 分享命盘',btn_chat:'🔮 AI 命理顾问 · 问答',
+    btn_reading:'深入一生解读 →',btn_share:'↗ 分享命盘',btn_chat:'✦ 选择 AI 命理师',
     back_recalc:'← 重新推演',back_result:'← 返回命盘',
 
     harmony_eyebrow:'Energy Balance',harmony_title:'命局调和',harmony_sub:'不是推荐商品，是帮你找回失衡的那一部分能量',
@@ -44,7 +44,7 @@ const I18N={
     share_download:'⬇ 保存图片',share_native:'↗ 分享',share_copy:'复制链接',
     share_x:'分享到 X',share_pin:'分享到 Pinterest',share_qr_hint:'扫码，体验你自己的专属命盘',
 
-    chat_title:'AI 命理顾问',chat_sub:'基于你的命盘，随时问问题',
+    chat_title:'AI 命理师',chat_sub:'选择一位命理师，进入你的专属对话',
     chat_empty:'我已经知道你的命盘了，不用重复输入生辰。<br>可以直接问我任何困惑。',
     chat_suggest1:'我该不该换工作？',chat_suggest2:'今年会遇到合适的人吗？',chat_suggest3:'我该不该换城市生活？',
     chat_placeholder:'输入你的问题…',
@@ -83,7 +83,7 @@ const I18N={
 
     wx_head:'Five Elements Balance',fate_label:'Chart Overview',
     analysis_shishen:'Ten Gods · Tap to Expand',analysis_score:'Chart Score',
-    btn_reading:'Full Life Reading →',btn_share:'↗ Share Chart',btn_chat:'🔮 AI Advisor · Ask',
+    btn_reading:'Full Life Reading →',btn_share:'↗ Share Chart',btn_chat:'✦ Choose Advisor',
     back_recalc:'← Recalculate',back_result:'← Back to Chart',
 
     harmony_eyebrow:'Energy Balance',harmony_title:'Harmony',harmony_sub:'Not a product recommendation — a way to find the energy you\'re missing',
@@ -135,7 +135,7 @@ const I18N={
 
     wx_head:'Balance de los Cinco Elementos',fate_label:'Resumen de tu Carta',
     analysis_shishen:'Diez Dioses · Toca para Expandir',analysis_score:'Puntuación de la Carta',
-    btn_reading:'Lectura Completa de Vida →',btn_share:'↗ Compartir Carta',btn_chat:'🔮 Asesor de IA · Preguntar',
+    btn_reading:'Lectura Completa de Vida →',btn_share:'↗ Compartir Carta',btn_chat:'✦ Elegir asesor',
     back_recalc:'← Recalcular',back_result:'← Volver a la Carta',
 
     harmony_eyebrow:'Energy Balance',harmony_title:'Armonía',harmony_sub:'No es una recomendación de productos, es una forma de recuperar la energía que te falta',
@@ -411,6 +411,7 @@ const SM={home:'s-home',choose:'s-choose',taro:'s-taro',bazi:'s-bazi',result:'s-
 function goto(id){
   playPageSound();
   if(['home','choose','taro','bazi'].includes(id)&&chartEntered)setChartEntered(false);
+  if(id==='chat')currentAdvisorKey=null;
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active','fade-in'));
   const el=document.getElementById(SM[id]||id);
   if(!el)return;
@@ -423,7 +424,7 @@ function goto(id){
 }
 
 document.addEventListener('pointerdown',e=>{
-  if(e.target.closest('button,.pcard,.lang-pill,.back-link,.mode-tab,.share-btn,.chat-suggest-chip,.jewel-link,.resonance-card'))playButtonSound();
+  if(e.target.closest('button,.pcard,.lang-pill,.back-link,.mode-tab,.share-btn,.chat-suggest-chip,.jewel-link,.resonance-card,.advisor-card,.advisor-back-btn'))playButtonSound();
 });
 
 function toggleAdv(){
@@ -769,15 +770,37 @@ function copyShareLink(){
 }
 
 // ════════════════════════════════════════
-//  AI 命理顾问 · 聊天
+//  十位 AI 命理师 · 选择与对话
 // ════════════════════════════════════════
+const ADVISOR_DATA=[
+  {key:'jia',tg:'甲',element:'木',name:'青岚',title:'青岚 · 甲木命理师',icon:'🌲',world:'春林、风过树梢',tone:'像林间风一样清醒，适合谈成长、事业方向与长期选择。',sound:'森林风、树梢摩擦、远处枝叶轻响',themeClass:'advisor-wood-jia',line:'风穿过树梢，答案也会慢慢显形。'},
+  {key:'yi',tg:'乙',element:'木',name:'扶苏',title:'扶苏 · 乙木命理师',icon:'🌿',world:'花枝、庭院微风',tone:'温柔细腻，适合谈关系、情绪、自我修复与柔软的力量。',sound:'庭院微风、花枝轻摆、露水滴落',themeClass:'advisor-wood-yi',line:'柔软不是退让，是知道如何继续生长。'},
+  {key:'bing',tg:'丙',element:'火',name:'明曜',title:'明曜 · 丙火命理师',icon:'☀️',world:'日照、暖光流动',tone:'明亮直接，适合谈表达、机会、行动力与被看见。',sound:'暖风、日照空气感、轻微火星',themeClass:'advisor-fire-bing',line:'真正的光，不必急着证明自己。'},
+  {key:'ding',tg:'丁',element:'火',name:'烛微',title:'烛微 · 丁火命理师',icon:'🕯️',world:'烛火、夜灯微响',tone:'安静陪伴，适合谈灵感、内心、亲密关系与夜里的问题。',sound:'烛火轻响、木芯细响、安静空间感',themeClass:'advisor-fire-ding',line:'微光也能照见一整条路。'},
+  {key:'wu',tg:'戊',element:'土',name:'崇山',title:'崇山 · 戊土命理师',icon:'⛰️',world:'群山、低沉风声',tone:'沉稳有力，适合谈责任、事业根基、压力与长期稳定。',sound:'山谷风、低频大地、远处回声',themeClass:'advisor-earth-wu',line:'山不催你，但会让你站稳。'},
+  {key:'ji',tg:'己',element:'土',name:'云畴',title:'云畴 · 己土命理师',icon:'🌾',world:'田野、虫鸣微风',tone:'包容温润，适合谈生活节奏、滋养、家庭与现实安排。',sound:'田野风、轻虫鸣、稻浪细声',themeClass:'advisor-earth-ji',line:'答案会像作物一样，在时间里成熟。'},
+  {key:'geng',tg:'庚',element:'金',name:'砺白',title:'砺白 · 庚金命理师',icon:'🏔️',world:'寒山、金石回响',tone:'清醒锋利，适合谈决断、边界、竞争与破局。',sound:'寒山风、金石回响、清冷空气',themeClass:'advisor-metal-geng',line:'锋芒不是为了伤人，是为了分清方向。'},
+  {key:'xin',tg:'辛',element:'金',name:'清商',title:'清商 · 辛金命理师',icon:'🔔',world:'月下器物、清铃',tone:'精致敏锐，适合谈审美、价值、人际分寸与内在秩序。',sound:'清铃、玉石轻碰、月下空间感',themeClass:'advisor-metal-xin',line:'清澈的声音，会留下最远的回响。'},
+  {key:'ren',tg:'壬',element:'水',name:'玄澜',title:'玄澜 · 壬水命理师',icon:'🌊',world:'大江、浪声',tone:'辽阔流动，适合谈迁移、格局、自由、变化与远方。',sound:'大江浪声、远潮、深水低频',themeClass:'advisor-water-ren',line:'水势向前，未必需要立刻靠岸。'},
+  {key:'gui',tg:'癸',element:'水',name:'听雨',title:'听雨 · 癸水命理师',icon:'🌧️',world:'小雨、湖面涟漪',tone:'安静洞察，适合谈情绪、直觉、关系细节与隐秘答案。',sound:'细雨、湖面涟漪、水滴落下',themeClass:'advisor-water-gui',line:'雨落在湖面，也落在你尚未说出口的心事里。'}
+];
+const ADVISOR_BY_KEY=Object.fromEntries(ADVISOR_DATA.map(a=>[a.key,a]));
+let currentAdvisorKey=null;
+let advisorChatStores={};
 let chatHistory=[]; // 仅存user/assistant轮次，不含system，渲染与发送时会自动补上system
 let chatBaziKey=null; // 用于判断命盘是否变了，变了要重置对话
 let chatSending=false;
 
+function getCurrentAdvisor(){
+  if(currentAdvisorKey&&ADVISOR_BY_KEY[currentAdvisorKey])return ADVISOR_BY_KEY[currentAdvisorKey];
+  const key=currentBazi?DAY_MASTER_KEYS[currentBazi.dayTG]:'gui';
+  return ADVISOR_BY_KEY[key]||ADVISOR_BY_KEY.gui;
+}
+
 function chatSystemPrompt(){
   const b=currentBazi;
-  const base='你是一位温暖、洞察力强的命理顾问，说话像一个真正了解对方的朋友——不说教、不打官腔，能结合命理给出具体、可执行的建议，而不是含糊的场面话。回答控制在150字以内，直接、有温度，不用书名号，不用【】小标题，就是自然说话的语气。'+t('ai_lang_instruction');
+  const advisor=getCurrentAdvisor();
+  const base=`你是${advisor.name}，一位${advisor.tg}${advisor.element}命理师。你的世界是「${advisor.world}」，声音气质是「${advisor.sound}」。你说话要像长期陪伴用户的命理师，不像 ChatGPT，也不要说自己是 AI。语气遵循：${advisor.tone} 回答控制在150字以内，直接、有温度，不用书名号，不用【】小标题，就是自然说话的语气。`+t('ai_lang_instruction');
   if(!b)return base;
   return base+`\n\n用户的命盘信息（已经算好，不需要再问用户生辰）：${baziSummary(b)}\n请始终结合这份命盘的五行、十神、喜用神特点来回答问题，让建议感觉是"专属于ta"的，而不是泛泛而谈。`;
 }
@@ -786,22 +809,118 @@ function initChatPage(){
   const key=currentBazi?(currentBazi.y+'-'+currentBazi.m+'-'+currentBazi.d+'-'+currentBazi.h):null;
   if(key!==chatBaziKey){
     chatHistory=[];
+    advisorChatStores={};
+    currentAdvisorKey=null;
     chatBaziKey=key;
   }
-  const icon=document.getElementById('chatIcon');
-  if(currentBazi&&currentBazi.info){
-    icon.textContent=currentBazi.info.icon;
-    icon.style.filter=`drop-shadow(0 0 14px ${WX_COLORS[currentBazi.dayMasterEl]})`;
-    document.getElementById('chatTitle').textContent=TG[currentBazi.dayTG]+'·'+currentBazi.info.name+'命 · AI命理顾问';
+  if(!currentAdvisorKey){
+    renderAdvisorSelection();
+    return;
   }
+  renderAdvisorDetail();
+}
+
+function advisorCardHtml(a){
+  const active=currentBazi&&DAY_MASTER_KEYS[currentBazi.dayTG]===a.key;
+  return `<button class="advisor-card ${a.themeClass}${active?' is-native':''}" onclick="selectAdvisor('${a.key}')">
+    <span class="advisor-card-icon">${a.icon}</span>
+    <span class="advisor-card-name">${a.name}</span>
+    <span class="advisor-card-role">${a.tg}${a.element}命理师</span>
+    <span class="advisor-card-world">${a.world}</span>
+    ${active?'<span class="advisor-native-tag">你的日主</span>':''}
+  </button>`;
+}
+
+function renderAdvisorSelection(){
+  const screen=document.getElementById('s-chat');
+  screen.className='screen active fade-in advisor-screen advisor-select-screen';
+  screen.removeAttribute('data-advisor');
+  currentAdvisorKey=null;
+  chatSending=false;
+  const current=currentBazi?ADVISOR_BY_KEY[DAY_MASTER_KEYS[currentBazi.dayTG]]:null;
+  screen.innerHTML=`
+    <div class="advisor-select-hero">
+      <div class="advisor-kicker">Destiny Guardians</div>
+      <div class="advisor-select-title">选择你的 AI 命理师</div>
+      <div class="advisor-select-sub">${current?`你的日主是${current.tg}${current.element}，也可以先见见${current.name}。`:'十位命理师各自守着一方命运世界。'}</div>
+    </div>
+    <div class="advisor-grid">${ADVISOR_DATA.map(advisorCardHtml).join('')}</div>
+    <div class="back-link" onclick="goto('result')" style="margin-top:24px" data-i18n="back_result">← 返回命盘</div>
+  `;
+}
+
+async function applyAdvisorWorld(advisor){
+  document.body.dataset.advisorWorld=advisor.key;
+  document.documentElement.style.setProperty('--advisor-accent',WX_COLORS[advisor.element]||'#D4AF6A');
+  if(!chartEntered)setChartEntered(true);
+  const profile={
+    dayMaster:advisor.key,
+    elements:{wood:.2,fire:.2,earth:.2,metal:.2,water:.2},
+    timePhase:DN?.phase==='dawn'?'day':(DN?.phase||'night'),
+    chartEntered:true,
+    themeConfig:await loadThemeConfig(advisor.key)
+  };
+  const theme=buildElementalTheme(profile);
+  renderElementalTheme(theme);
+  getElementalScene().start(theme);
+  if(soundEnabled)playElementalSoundscape({dayTG:DAY_MASTER_KEYS.indexOf(advisor.key),wxPct:{木:20,火:20,土:20,金:20,水:20}});
+}
+
+function selectAdvisor(key){
+  currentAdvisorKey=key;
+  chatHistory=advisorChatStores[key]||[];
+  renderAdvisorDetail();
+  const advisor=getCurrentAdvisor();
+  applyAdvisorWorld(advisor);
+}
+
+function renderAdvisorDetail(){
+  const advisor=getCurrentAdvisor();
+  const screen=document.getElementById('s-chat');
+  screen.className=`screen active fade-in advisor-screen advisor-detail-screen ${advisor.themeClass}`;
+  screen.dataset.advisor=advisor.key;
+  const suggest1=advisor.element==='木'?'我现在应该向哪里生长？':advisor.element==='火'?'我该不该主动一点？':advisor.element==='土'?'我怎样才能更稳定？':advisor.element==='金'?'我该如何做决定？':'我该顺流还是改变方向？';
+  const suggest2=advisor.element==='水'?'这段关系我该怎么判断？':'今年事业有什么提醒？';
+  screen.innerHTML=`
+    <div class="advisor-world-stage">
+      <div class="advisor-scene-depth"></div>
+      <div class="advisor-person" aria-hidden="true"><span>${advisor.icon}</span></div>
+      <div class="advisor-ripple r1"></div>
+      <div class="advisor-ripple r2"></div>
+    </div>
+    <div class="advisor-chat-panel">
+      <div class="advisor-detail-hero">
+        <button class="advisor-back-btn" onclick="renderAdvisorSelection()">←</button>
+        <div class="advisor-avatar">${advisor.icon}</div>
+        <div>
+          <div class="chat-title">${advisor.title}</div>
+          <div class="chat-sub">${advisor.line}</div>
+        </div>
+      </div>
+      <div class="advisor-sound-line">声景：${advisor.sound}</div>
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="chat-suggests" id="chatSuggests">
+        <div class="chat-suggest-chip" onclick="sendChatSuggestText('${suggest1}')">${suggest1}</div>
+        <div class="chat-suggest-chip" onclick="sendChatSuggestText('${suggest2}')">${suggest2}</div>
+        <div class="chat-suggest-chip" onclick="sendChatSuggestText('我的命盘现在最需要注意什么？')">我的命盘现在最需要注意什么？</div>
+      </div>
+      <div class="chat-input-bar">
+        <input class="chat-input" id="chatInput" type="text" placeholder="把问题说给${advisor.name}听…" onkeydown="if(event.key==='Enter')sendChatMessage()">
+        <button class="chat-send-btn" id="chatSendBtn" onclick="sendChatMessage()">➤</button>
+      </div>
+    </div>
+    <div class="back-link" onclick="goto('result')" style="margin-top:14px" data-i18n="back_result">← 返回命盘</div>
+  `;
   renderChatMessages();
-  setTimeout(()=>document.getElementById('chatInput').focus(),100);
+  setTimeout(()=>document.getElementById('chatInput')?.focus(),100);
 }
 
 function renderChatMessages(){
   const box=document.getElementById('chatMessages');
+  if(!box)return;
+  const advisor=getCurrentAdvisor();
   if(chatHistory.length===0){
-    box.innerHTML='<div class="chat-empty-hint">我已经知道你的命盘了，不用重复输入生辰。<br>可以直接问我任何困惑。</div>';
+    box.innerHTML=`<div class="chat-empty-hint">${advisor.name}已经在这里。<br>不用重复输入生辰，直接说你的问题。</div>`;
     return;
   }
   box.innerHTML=chatHistory.map(m=>
@@ -815,6 +934,12 @@ function escapeHtml(s){
 
 function sendChatSuggest(key){
   document.getElementById('chatInput').value=t(key);
+  sendChatMessage();
+}
+function sendChatSuggestText(text){
+  const input=document.getElementById('chatInput');
+  if(!input)return;
+  input.value=text;
   sendChatMessage();
 }
 
@@ -840,10 +965,12 @@ async function sendChatMessage(){
     const messages=[{role:'system',content:chatSystemPrompt()},...chatHistory];
     const reply=await callClaudeChat(messages);
     chatHistory.push({role:'assistant',content:reply});
+    if(currentAdvisorKey)advisorChatStores[currentAdvisorKey]=chatHistory;
     renderChatMessages();
   }catch(e){
     loadingRow.remove();
     chatHistory.push({role:'assistant',content:'（网络异常，没能收到回复：'+(e.message||'请稍后重试')+'）'});
+    if(currentAdvisorKey)advisorChatStores[currentAdvisorKey]=chatHistory;
     renderChatMessages();
   }finally{
     chatSending=false;
