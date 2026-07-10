@@ -1,0 +1,28 @@
+{
+  "gan": "wu",
+  "themeId": "mountain_earth",
+  "sceneType": "mountain",
+  "dominantElement": "earth",
+  "colors": {
+    "skyTop": "#1d1a16",
+    "skyMid": "#4a3b2f",
+    "skyBottom": "#0c0a08",
+    "accent": "#C7A06B",
+    "accent2": "#7E6347",
+    "glow": "rgba(210,180,130,0.34)"
+  },
+  "motion": {
+    "speed": 0.42,
+    "particles": 28,
+    "mist": 0.46,
+    "mountainLayers": 5,
+    "birds": 2,
+    "lowMotionParticles": 8
+  },
+  "sound": {
+    "base": [{ "src": "/sounds/themes/wu/valley-wind.mp3", "volume": 0.065 }],
+    "element": [{ "src": "/sounds/themes/wu/earth-low.mp3", "volume": 0.055 }],
+    "harmony": [{ "src": "/sounds/themes/wu/distant-bell-bed.mp3", "volume": 0.025 }],
+    "events": [{ "src": "/sounds/events/wu/distant-bell.mp3", "volume": 0.075, "minDelay": 18, "maxDelay": 35 }]
+  }
+}

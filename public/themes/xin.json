@@ -1,0 +1,31 @@
+{
+  "gan": "xin",
+  "themeId": "jade_moon",
+  "sceneType": "jadeMoon",
+  "dominantElement": "metal",
+  "colors": {
+    "skyTop": "#101821",
+    "skyMid": "#263844",
+    "skyBottom": "#070b10",
+    "accent": "#D9E2E4",
+    "accent2": "#8FA5A8",
+    "glow": "rgba(220,245,242,0.36)"
+  },
+  "motion": {
+    "speed": 0.48,
+    "particles": 38,
+    "moonlight": 0.42,
+    "stream": 0.38,
+    "glints": 0.42,
+    "lowMotionParticles": 10
+  },
+  "sound": {
+    "base": [{ "src": "/sounds/themes/xin/cool-space.mp3", "volume": 0.045 }],
+    "element": [{ "src": "/sounds/themes/xin/jade.mp3", "volume": 0.04 }],
+    "harmony": [{ "src": "/sounds/themes/xin/silver-bell.mp3", "volume": 0.03 }],
+    "events": [
+      { "src": "/sounds/events/xin/jade-tap.mp3", "volume": 0.065, "minDelay": 12, "maxDelay": 35 },
+      { "src": "/sounds/events/xin/tiny-bell.mp3", "volume": 0.055, "minDelay": 18, "maxDelay": 35 }
+    ]
+  }
+}
